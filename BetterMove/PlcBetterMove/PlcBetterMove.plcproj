@@ -50,6 +50,11 @@
       <Namespace>Tc3_Module</Namespace>
     </PlaceholderReference>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="PlcBetterMove.tmc">
+      <SubType>Content</SubType>
+    </Content>
+  </ItemGroup>
   <ProjectExtensions>
     <PlcProjectOptions>
       <XmlArchive>
