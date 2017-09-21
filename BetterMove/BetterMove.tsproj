@@ -1254,6 +1254,13 @@ External Setpoint Generation:
 		<ImageData Id="1000">424de6000000000000007600000028000000100000000e000000010004000000000070000000c40e0000c40e000000000000000000000000000000008000008000000080800080000000800080008080000080808000c0c0c0000000ff0000ff000000ffff00ff000000ff00ff00ffff0000ffffff00ffffffffffffffffffffffffffffffff79999997ffffffff99977999ffffffff9998ff89ffffffff99999fffffffffff999997ffff777777999999ffff777777799999ffff877777fffffffffff77777ffffffff78ff8777ffffffff77777777ffffffff77777777ffffffffffffffff</ImageData>
 	</ImageDatas>
 	<Project ProjectGUID="{4DF4CB66-A432-4C2E-A78B-BF4CCD335734}" TargetNetId="5.39.221.128.1.1">
+		<System>
+			<Tasks>
+				<Task Id="5" Priority="20" CycleTime="100000" AmsPort="350">
+					<Name>PlcTask</Name>
+				</Task>
+			</Tasks>
+		</System>
 		<Motion>
 			<NC>
 				<SafTask Priority="4" CycleTime="20000" AmsPort="501" IoAtBegin="true">
@@ -1482,6 +1489,14 @@ External Setpoint Generation:
 				</Axis>
 			</NC>
 		</Motion>
+		<Plc>
+			<Project GUID="{F9D5496F-A004-4BD4-97C3-50DA9278E7FC}" Name="PlcBetterMove" PrjFilePath="PlcBetterMove\PlcBetterMove.plcproj" TmcFilePath="PlcBetterMove\PlcBetterMove.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e">
+				<Instance Id="#x01010010" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2">
+					<Name>PlcBetterMove Instance</Name>
+					<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
+				</Instance>
+			</Project>
+		</Plc>
 		<Io>
 			<Device DevType="111" DevFlags="#x0003" AmsPort="28676" AmsNetId="5.39.221.128.5.1" RemoteName="Device 4 (EtherCAT)" Id="4">
 				<Name>Device 4 (EtherCAT)</Name>
@@ -2115,7 +2130,7 @@ External Setpoint Generation:
 		</Io>
 	</Project>
 	<Mappings>
-		<MappingInfo Identifier="{00000000-0050-0304-1000-040350000403}" Id="#x03070020"/>
+		<MappingInfo Identifier="{00000000-0020-0304-1000-040320000403}" Id="#x03070020"/>
 		<MappingInfo Identifier="{00000000-0040-0304-1000-040340000403}" Id="#x03070010"/>
 		<OwnerA Name="TINC^NC-Task 1 SAF^Axes^Axis 1">
 			<OwnerB Name="TIID^Device 4 (EtherCAT)^Drive 1 (Elmo Drive)">
