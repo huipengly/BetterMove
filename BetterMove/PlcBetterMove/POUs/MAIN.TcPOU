@@ -12,9 +12,21 @@ VAR
 	axis1: AXIS_REF;
 	Power1Output:  ST_McOutputs;
 	status: INT;
-	PlcTime: LREAL := 0;
-	PlcCycleTime: LREAL := 0.01;
+	MoveTime: LREAL := 0;			//两点间移动时间
+	PlcCycleTime: LREAL := 0.01;	//PLC循环时间
+	EachTime: LREAL := 1;			//距离曲线离散后,时间间隔T
 	wait: LREAL;
+	MyGivenPosition : ARRAY[0..10] OF LREAL;
+	NextPosition: LREAL;			//拆分之后的下一个距离
+	step: LREAL;					//单次移动距离
+	LastGivenPosition: LREAL;		//上次给定位置
+	GivenPositon: LREAL;			//本次给定位置
+	CanGivenPositon: BOOL;			//是否可以给定位置,输出给C++
+	IsGivenPositon: BOOL;			//是否有给定位置,C++输入判定
+//	GivenPositonBuffer : array[0..10] OF LREAL;
+	InitPosition: LREAL := 10;		//机械臂初始化位置
+	testcount: INT;
+	aa: LREAL;
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -29,34 +41,15 @@ MC_MoveAbsolute1(
 	);
 	
 MC_ExtSetPointGenDisable1(
-	Axis:= axis1, 
-	Execute:= , 
-	Done=> , 
-	Busy=> , 
-	Error=> , 
-	ErrorID=> , 
-	Enabled=> );
+	Axis:= axis1, );
 	
 MC_ExtSetPointGenEnable1(
-	Axis:= axis1, 
-	Execute:= , 
-	Position:= , 
-	PositionType:= , 
-	Done=> , 
-	Busy=> , 
-	Error=> , 
-	ErrorID=> , 
-	Enabled=> );
-	
-
+	Axis:= axis1,  );
 
 MC_Reset1(
-	Axis:= axis1, 
-	Execute:= , 
-	Done=> , 
-	Busy=> , 
-	Error=> , 
-	ErrorID=> );
+	Axis:= axis1,  );
+	
+axis1.NcToPlc.ActPos;
 	
 CASE status OF
 	0://init 初始化
@@ -65,6 +58,23 @@ CASE status OF
 		MC_ExtSetPointGenDisable1.Execute := FALSE;
 		MC_MoveAbsolute1.Execute := FALSE;
 		MC_Reset1.Execute := FALSE;
+	
+		//测试用给定数据
+		MyGivenPosition[0] := 10;
+		MyGivenPosition[1] := 9.5;
+		MyGivenPosition[2] := 10;
+		MyGivenPosition[3] := 10.5;
+		MyGivenPosition[4] := 10.4;
+		MyGivenPosition[5] := 10.5;
+		MyGivenPosition[6] := 11;
+		MyGivenPosition[7] := 11.5;
+		MyGivenPosition[8] := 11;
+		MyGivenPosition[9] := 10;
+		IsGivenPositon := TRUE;
+		GivenPositon := MyGivenPosition[0];
+		testcount := 1;
+		//测试用结束
+		
 		status := 1;
 		wait := 0;
 	1://power 使能
@@ -74,54 +84,52 @@ CASE status OF
 			status := 2;
 		END_IF
 	2://move 移动到初始位置
-		MC_MoveAbsolute1.Position := SIN(0) + 10;
+		MC_MoveAbsolute1.Position := InitPosition;
 		MC_MoveAbsolute1.Velocity := 2;
 		MC_MoveAbsolute1.Execute := TRUE;
+		LastGivenPosition := InitPosition;
 		IF MC_MoveAbsolute1.Done THEN
 			MC_MoveAbsolute1.Execute := FALSE;
 			status := 3;
 		END_IF
-	3://enable 按照外部给定运动
-		MC_ExtSetPointGenEnable1.Execute := TRUE;
-		IF MC_ExtSetPointGenEnable1.Enabled THEN
-			PlcTime := PlcTime + PlcCycleTime;
-		(*	MC_ExtSetPointGenFeed(
-				Position:= 8*SIN(2*pi*0.05*PlcTime) + 10, 
-				Velocity:= 8*COS(PlcTime), 
-				Acceleration:= -8*SIN(PlcTime), 
-				Direction:= 1, 
-				Axis:= axis1);
-				*)
-			MC_ExtSetPointGenFeed(
-				Position:= SIN(2*pi*0.05*PlcTime) + 10, 
-				Velocity:=0, 
-				Acceleration:=0, 
-                // Velocity:= COS(PlcTime), 
-				//Acceleration:= -SIN(PlcTime), 
-				Direction:= 1, 
-				Axis:= axis1);
-		END_IF
-		IF axis1.Status.Error THEN
+	3://等待变量输入,并计算单次移动距离
+		IF IsGivenPositon THEN
+			LastGivenPosition := axis1.NcToPlc.ActPos;//记录上次给定位置
+			step := (GivenPositon - LastGivenPosition) * PlcCycleTime * EachTime;//将大距离拆分为每次时间循环改变位置
+			NextPosition := GivenPositon;
 			status := 4;
 		END_IF
-	4://error
-		MC_ExtSetPointGenEnable1.Execute := FALSE;
-		MC_ExtSetPointGenDisable1.Execute := MC_ExtSetPointGenEnable1.Enabled;
-		IF NOT axis1.Status.Coupled THEN
-			IF axis1.Status.Error THEN
-				status := 5;
-			ELSE 
-				status := 0;
+	4://enable 按照外部给定运动
+		MC_ExtSetPointGenEnable1.Execute := TRUE;
+		IF MC_ExtSetPointGenEnable1.Enabled THEN
+			LastGivenPosition := LastGivenPosition + step;
+			MC_ExtSetPointGenFeed(
+				Position:= LastGivenPosition,
+				Velocity:= 0, 
+				Acceleration:= 0, 
+				Direction:= 1, 
+				Axis:= axis1);
+		END_IF
+			aa := ABS(LastGivenPosition - NextPosition);
+			IF ABS(LastGivenPosition - NextPosition) <= ABS(step) THEN		//已经走到目标位置
+				//IF判定想判定等于,但是有问题,则判定两个的差的绝对值小于一次移动的距离.
+				//测试用
+				IF testcount <= 9 THEN
+					IsGivenPositon := TRUE;
+					GivenPositon := MyGivenPosition[testcount];
+					testcount := testcount + 1;
+				ELSE
+					IsGivenPositon := FALSE;
+				END_IF
+				//测试用结束
+				IF IsGivenPositon THEN
+					step := (GivenPositon - LastGivenPosition) * PlcCycleTime * EachTime;
+					LastGivenPosition := NextPosition;//记录上次给定位置
+					NextPosition := GivenPositon;
+				ELSE
+					status := 3;	//返回状态3，等待位置给定
+				END_IF
 			END_IF
-		END_IF
-	5://reset
-		MC_Reset1.Execute := TRUE;
-		MC_ExtSetPointGenDisable1.Execute := FALSE;
-		IF MC_Reset1.Done THEN
-			status := 0;
-		ELSIF MC_Reset1.Error THEN
-			status := 0;
-		END_IF
 END_CASE]]></ST>
     </Implementation>
   </POU>
