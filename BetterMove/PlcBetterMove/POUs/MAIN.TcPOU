@@ -3,7 +3,6 @@
   <POU Name="MAIN" Id="{02169f48-3937-45f7-92da-1b8b2105f78e}" SpecialFunc="None">
     <Declaration><![CDATA[PROGRAM MAIN
 VAR
-
 	MC_Power1: MC_Power;
 	MC_MoveAbsolute1: MC_MoveAbsolute;
 	MC_ExtSetPointGenDisable1: MC_ExtSetPointGenDisable;
@@ -11,25 +10,24 @@ VAR
 	MC_Reset1: MC_Reset;
 	axis1: AXIS_REF;				//NC轴变量
 	status: INT;					//状态变量
-	MoveTime: LREAL := 0;			//两点间移动时间
+//	MoveTime: LREAL := 0;			//两点间移动时间
 	PlcCycleTime: LREAL := 0.01;	//PLC循环时间
 	EachTime: LREAL := 2;			//距离曲线离散后,时间间隔T
-	MyGivenPosition : ARRAY[0..10] OF LREAL;
 	step: LREAL;					//单次移动距离
 	ActGivenPosition: LREAL;		//实际给电机的坐标
 	LastPosition: LREAL;			//上次实际给电机的坐标
 	NextPosition: LREAL;			//要去的下一个给定距离
-	GivenPositon: LREAL;			//给定位置
-	CanGivenPositon: BOOL;			//是否可以给定位置,输出给C++，还未做
-	IsGivenPositon: BOOL;			//是否有给定位置,C++输入判定
+	GivenPosition AT%I* : LREAL;	//给定位置,C++输入给定位置
+	CanGivenPosition AT%Q* : BOOL := TRUE;	//是否可以给定位置,输出给C++，还未做
+	IsGivenPosition AT%I* : BOOL := FALSE;	//是否有给定位置,C++输入判定
 	InitPosition: LREAL := 10;		//机械臂初始化位置
 	
 	//测试用变量
 	testcount: INT;					//数组计数
+	MyGivenPosition : ARRAY[0..10] OF LREAL;
 	//测试用变量结束
 					
-END_VAR
-]]></Declaration>
+END_VAR]]></Declaration>
     <Implementation>
       <ST><![CDATA[MC_Power1(
 	Axis:= axis1,
@@ -60,6 +58,7 @@ CASE status OF
 		MC_MoveAbsolute1.Execute := FALSE;
 		//MC_Reset1.Execute := FALSE;
 	
+		(*
 		//测试用给定数据
 		MyGivenPosition[0] := 10;
 		MyGivenPosition[1] := 9.5;
@@ -75,6 +74,7 @@ CASE status OF
 		GivenPositon := MyGivenPosition[0];
 		testcount := 1;
 		//测试用结束
+		*)
 		
 		status := 1;
 	1://power 使能
@@ -91,13 +91,15 @@ CASE status OF
 			status := 3;
 		END_IF
 	3://等待变量输入,并计算单次移动距离
-		IF IsGivenPositon THEN
+		IF IsGivenPosition THEN
 			LastPosition := axis1.NcToPlc.ActPos;//读取当前位置作为上次给定位置
 			//将一个离散时间常数内的移动距离，变换为单次plc循环的移动距离
 		  	//错的 step := (GivenPositon - LastGivenPosition) * PlcCycleTime * EachTime;
-			step := (GivenPositon - LastPosition) * PlcCycleTime / EachTime;
+			step := (GivenPosition - LastPosition) * PlcCycleTime / EachTime;
 			//给定位置传送给下个位置变量
-			NextPosition := GivenPositon;
+			NextPosition := GivenPosition;
+			CanGivenPosition := TRUE;
+			IsGivenPosition := FALSE;
 			status := 4;
 		END_IF
 	4://按照外部给定运动，若完成当次移动后还有给定，则继续移动
@@ -118,7 +120,7 @@ CASE status OF
 			//精度直接判定
 			//a:=1E-10;
 			
-			//测试用
+	(*		//测试用
 			IF testcount <= 9 THEN
 				IsGivenPositon := TRUE;
 				GivenPositon := MyGivenPosition[testcount];
@@ -127,15 +129,22 @@ CASE status OF
 				IsGivenPositon := FALSE;
 			END_IF
 			//测试用结束
-			
-			IF IsGivenPositon THEN	//判定还有没有给定位置，若有，则继续移动，若没有，则返回状态3等待
-				step := (GivenPositon - LastPosition) * PlcCycleTime / EachTime;
+			*)
+			IF IsGivenPosition THEN	//判定还有没有给定位置，若有，则继续移动，若没有，则返回状态3等待
+				step := (GivenPosition - LastPosition) * PlcCycleTime / EachTime;
 				LastPosition := NextPosition;//记录上次给定位置
-				NextPosition := GivenPositon;
+				NextPosition := GivenPosition;
+				CanGivenPosition := TRUE;
+				IsGivenPosition := FALSE;
 			ELSE
 				status := 3;	//返回状态3，等待位置给定
 			END_IF
 		END_IF
+		
+		IF IsGivenPosition THEN
+			CanGivenPosition := FALSE;
+		END_IF
+		
 END_CASE
 ]]></ST>
     </Implementation>
