@@ -32,27 +32,19 @@ VAR
 END_VAR
 ]]></Declaration>
     <Implementation>
-      <ST><![CDATA[MC_Power1
-    (
+      <ST><![CDATA[MC_Power1(
 	Axis:= axis1,
 	Enable_Positive:= TRUE,
-	Enable_Negative:= TRUE,
-	);
+	Enable_Negative:= TRUE, );
 	
- MC_MoveAbsolute1  //初始化位置
-   (
-	Axis:= axis1, 
-	);
+ MC_MoveAbsolute1(  //初始化位置
+	Axis:= axis1, );
 	
-MC_ExtSetPointGenDisable1
-(
-	Axis:= axis1,
-);
+MC_ExtSetPointGenDisable1(
+	Axis:= axis1, );
 	
-MC_ExtSetPointGenEnable1
-(
-	Axis:= axis1, 
- );
+MC_ExtSetPointGenEnable1(
+	Axis:= axis1, );
 
 
 //MC_Reset1(
@@ -86,14 +78,16 @@ CASE status OF
 		//测试用结束
 		
 		status := 1;
-		wait := 0;
+//		wait := 0;
 	1://power 使能
 		MC_Power1.Enable := TRUE;
 		//TODO: power完成，应该可以通过变量判断，而不是通过简单延时。
-		wait := wait + PlcCycleTime;
-		IF wait>1 THEN
+//		wait := wait + PlcCycleTime;
+//		IF wait>1 THEN
+		IF MC_Power1.Status THEN
 			status := 2;
 		END_IF
+//		END_IF
 	2://move 移动到初始位置
 		MC_MoveAbsolute1.Position := InitPosition;
 		MC_MoveAbsolute1.Velocity := 2;
@@ -117,14 +111,12 @@ CASE status OF
 		MC_ExtSetPointGenEnable1.Execute := TRUE;
 		IF MC_ExtSetPointGenEnable1.Enabled THEN
 			LastGivenPosition := LastGivenPosition + step;//移动坐标为上次坐标加上单次移动距离
-			MC_ExtSetPointGenFeed
-				(
+			MC_ExtSetPointGenFeed(
 				Position:= LastGivenPosition,	//给定距离
 				Velocity:= 0, 					//速度和加速度可设为0，让plc自己计算
 				Acceleration:= 0, 
 				Direction:= 1, 
-				Axis:= axis1
-				);
+				Axis:= axis1);
 		END_IF
 		IF ABS(LastGivenPosition - NextPosition) <= 1E-10 THEN		//判定已经走到目标位置
 			//IF判定想判定等于,但是有问题,两个认为相同的浮点数之间会有一个极小的误差存在，所以不应该判断相等
