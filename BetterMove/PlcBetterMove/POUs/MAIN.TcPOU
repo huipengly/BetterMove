@@ -18,7 +18,7 @@ VAR
 	LastPosition: LREAL;			//上次实际给电机的坐标
 	NextPosition: LREAL;			//要去的下一个给定距离
 	GivenPosition AT%I* : LREAL;	//给定位置,C++输入给定位置
-	CanGivenPosition AT%Q* : BOOL := TRUE;	//是否可以给定位置,输出给C++，还未做
+	CanGivenPosition AT%Q* : BOOL := FALSE;	//是否可以给定位置,输出给C++，还未做
 	IsGivenPosition AT%I* : BOOL := FALSE;	//是否有给定位置,C++输入判定
 	InitPosition: LREAL := 10;		//机械臂初始化位置
 	
@@ -84,11 +84,12 @@ CASE status OF
 		END_IF
 	2://move 移动到初始位置
 		MC_MoveAbsolute1.Position := InitPosition;
-		GivenPosition := InitPosition;
+//		GivenPosition := InitPosition;
 		MC_MoveAbsolute1.Velocity := 2;
 		MC_MoveAbsolute1.Execute := TRUE;
 		IF MC_MoveAbsolute1.Done THEN
 			MC_MoveAbsolute1.Execute := FALSE;
+			CanGivenPosition := TRUE;			//进入判断前一个时间,才将可以给定位置变为真
 			status := 3;
 		END_IF
 	3://等待变量输入,并计算单次移动距离
@@ -135,16 +136,16 @@ CASE status OF
 				step := (GivenPosition - LastPosition) * PlcCycleTime / EachTime;
 				LastPosition := NextPosition;//记录上次给定位置
 				NextPosition := GivenPosition;
-				CanGivenPosition := TRUE;
+				CanGivenPosition := TRUE;	//完成一次移动后，通知c++可以继续给定
 				IsGivenPosition := FALSE;
 			ELSE
 				status := 3;	//返回状态3，等待位置给定
 			END_IF
 		END_IF
 		
-		IF IsGivenPosition THEN
+(*		IF IsGivenPosition THEN
 			CanGivenPosition := FALSE;
-		END_IF
+		END_IF*)
 		
 END_CASE
 ]]></ST>
