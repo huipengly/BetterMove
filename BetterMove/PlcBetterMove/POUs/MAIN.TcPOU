@@ -84,6 +84,7 @@ CASE status OF
 		END_IF
 	2://move 移动到初始位置
 		MC_MoveAbsolute1.Position := InitPosition;
+		GivenPosition := InitPosition;
 		MC_MoveAbsolute1.Velocity := 2;
 		MC_MoveAbsolute1.Execute := TRUE;
 		IF MC_MoveAbsolute1.Done THEN
