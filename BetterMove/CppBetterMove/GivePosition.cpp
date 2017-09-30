@@ -167,9 +167,11 @@ HRESULT CGivePosition::SetObjStateSP()
 	return hr;
 }
 
-double MyCppPosition[10] ={ 10.5, 9.5, 9.6, 9.9, 10.9, 11.5, 10.8, 10.7, 10.3, 11.8 };
-int testcount = 0;
-//double time = 0;
+//double MyCppPosition[100] = { 10.5, 9.5, 9.6, 9.9, 10.9, 11.5, 10.8, 10.7, 10.3, 11.8 };
+double MyCppPosition[100] = { 10.5, 9.5, 9.6, 9.9, 10.9 };
+int PositionCount = 0;			//位置数组数据移动到第几个坐标
+int PositionArraySize = 5;		//位置数组有多少个坐标
+double time = 0;
 //double cycletime = 0.01;
 HRESULT CGivePosition::CycleUpdate(ITcTask* ipTask, ITcUnknown* ipCaller, ULONG_PTR context)
 {
@@ -177,47 +179,46 @@ HRESULT CGivePosition::CycleUpdate(ITcTask* ipTask, ITcUnknown* ipCaller, ULONG_
 
 	// TODO: Replace the sample with your cyclic code
 
-/*	for (; testcount < 10; )
+	//测试用 添加位置坐标
+	if (5 == PositionCount)
 	{
-		if (m_Inputs.CanGivenPosition)
+		time += 0.01;
+		if (10 <= time)
 		{
-			m_Outputs.IsGivenPositon = TRUE;
-			m_Outputs.GivenPosition = MyCppPosition[testcount];
+			//11.5, 10.8, 10.7, 10.3, 11.8
+			MyCppPosition[PositionArraySize] = 11.5;
+			PositionArraySize++;
+			MyCppPosition[PositionArraySize] = 10.8;
+			PositionArraySize++;
+			MyCppPosition[PositionArraySize] = 10.7;
+			PositionArraySize++;
+			MyCppPosition[PositionArraySize] = 10.3;
+			PositionArraySize++;
+			MyCppPosition[PositionArraySize] = 11.8;
+			PositionArraySize++;
 		}
-		++testcount;
-	}*/
-	if (testcount < 10)
-	{
+	}
+	//测试用结束
 
-		if (m_Inputs.CanGivenPosition)
+	//函数块，使电机按照给定值移动。
+	{
+		if (PositionCount < PositionArraySize)	//没有走完已有坐标，则继续移动
 		{
-			m_Outputs.GivenPosition = MyCppPosition[testcount];
-			m_Outputs.IsGivenPositon = TRUE;
-			//if (testcount < 9)	//if (testcount < 10)，10数组越界
-			//{
-			//}
+
+			if (m_Inputs.CanGivenPosition)		//可以给定坐标
+			{
+				m_Outputs.GivenPosition = MyCppPosition[PositionCount];	//将坐标传给plc
+				m_Outputs.IsGivenPositon = TRUE;						//c++给定了坐标
+			}
+		}
+		if ((m_Outputs.IsGivenPositon) && (MyCppPosition[PositionCount] == m_Inputs.NextPosition))
+			//当NextPosition已经记录了给定坐标时，认为可以继续给定，将IsGivenPositon设为假
+		{
+			m_Outputs.IsGivenPositon = FALSE;	//上一次给定坐标已被PLC记录，认为c++未给定下一个坐标，可以继续给定
+			++PositionCount;					//将c++坐标移动到下一个
 		}
 	}
-	if ((m_Outputs.IsGivenPositon) && (MyCppPosition[testcount] == m_Inputs.NextPosition))
-	{
-		m_Outputs.IsGivenPositon = FALSE;
-		++testcount;
-	}
-/*	else
-	{
-		m_Outputs.IsGivenPositon = TRUE;
-	}*/
-/*	else if (testcount == 9)
-	{
-		m_Inputs.IsGivenPositon;
-		m_Outputs.IsGivenPositon = FALSE;
-	}*/
-/*	if ((m_Inputs.CanGivenPosition) && (testcount < 1))
-	{
-		m_Outputs.IsGivenPositon = TRUE;
-		m_Outputs.GivenPosition = MyCppPosition[1];
-		++testcount;
-	}*/
+	//函数块，使电机按照给定值移动结束。
 
 	return hr;
 }

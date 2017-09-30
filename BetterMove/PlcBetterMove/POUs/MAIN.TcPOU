@@ -34,7 +34,7 @@ END_VAR]]></Declaration>
 	Enable_Positive:= TRUE,
 	Enable_Negative:= TRUE, );
 	
- MC_MoveAbsolute1(  //初始化位置
+MC_MoveAbsolute1(  //初始化位置
 	Axis:= axis1, );
 	
 MC_ExtSetPointGenDisable1(
@@ -73,7 +73,6 @@ CASE status OF
 			//给定位置传送给下个位置变量
 			NextPosition := GivenPosition;
 			CanGivenPosition := TRUE;
-		//	IsGivenPosition := FALSE;
 			status := 4;
 		END_IF
 		//BREAK;
@@ -99,10 +98,6 @@ CASE status OF
 				LastPosition := NextPosition;//记录上次给定位置
 				NextPosition := GivenPosition;
 				CanGivenPosition := TRUE;	//完成一次移动，并使用上次给定后，通知c++可以继续给定
-//				IsGivenPosition := FALSE;
-//			END_IF
-//			IF IsGivenPosition = FALSE THEN
-//			ELSIF IsGivenPosition = FALSE THEN
 			ELSE
 				status := 3;				//返回状态3，等待位置给定
 			END_IF
