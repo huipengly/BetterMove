@@ -16,7 +16,7 @@ VAR
 	step: LREAL;					//单次移动距离
 	ActGivenPosition: LREAL;		//实际给电机的坐标
 	LastPosition: LREAL;			//上次实际给电机的坐标
-	NextPosition: LREAL;			//要去的下一个给定距离
+	NextPosition AT%Q* : LREAL;			//要去的下一个给定距离
 	GivenPosition AT%I* : LREAL;	//给定位置,C++输入给定位置
 	CanGivenPosition AT%Q* : BOOL := FALSE;	//是否可以给定位置,输出给C++，还未做
 	IsGivenPosition AT%I* : BOOL := FALSE;	//是否有给定位置,C++输入判定
@@ -43,39 +43,12 @@ MC_ExtSetPointGenDisable1(
 MC_ExtSetPointGenEnable1(
 	Axis:= axis1, );
 
-
-//MC_Reset1(
-	//Axis:= axis1,  );
-	
-	
-//axis1.NcToPlc.ActPos;
-
 CASE status OF
 	0://init 初始化
 		MC_Power1.Enable := FALSE;
 		MC_ExtSetPointGenEnable1.Execute := FALSE;
 		MC_ExtSetPointGenDisable1.Execute := FALSE;
 		MC_MoveAbsolute1.Execute := FALSE;
-		//MC_Reset1.Execute := FALSE;
-	
-		(*
-		//测试用给定数据
-		MyGivenPosition[0] := 10;
-		MyGivenPosition[1] := 9.5;
-		MyGivenPosition[2] := 10;
-		MyGivenPosition[3] := 10.5;
-		MyGivenPosition[4] := 10.4;
-		MyGivenPosition[5] := 10.5;
-		MyGivenPosition[6] := 11;
-		MyGivenPosition[7] := 11.5;
-		MyGivenPosition[8] := 11;
-		MyGivenPosition[9] := 10;
-		IsGivenPositon := TRUE;
-		GivenPositon := MyGivenPosition[0];
-		testcount := 1;
-		//测试用结束
-		*)
-		
 		status := 1;
 	1://power 使能
 		MC_Power1.Enable := TRUE;
@@ -84,12 +57,11 @@ CASE status OF
 		END_IF
 	2://move 移动到初始位置
 		MC_MoveAbsolute1.Position := InitPosition;
-//		GivenPosition := InitPosition;
 		MC_MoveAbsolute1.Velocity := 2;
 		MC_MoveAbsolute1.Execute := TRUE;
 		IF MC_MoveAbsolute1.Done THEN
 			MC_MoveAbsolute1.Execute := FALSE;
-			CanGivenPosition := TRUE;			//进入判断前一个时间,才将可以给定位置变为真
+			CanGivenPosition := TRUE;			//进入判断前一个时间,才将允许给定标志量变为真
 			status := 3;
 		END_IF
 	3://等待变量输入,并计算单次移动距离
@@ -101,17 +73,18 @@ CASE status OF
 			//给定位置传送给下个位置变量
 			NextPosition := GivenPosition;
 			CanGivenPosition := TRUE;
-			IsGivenPosition := FALSE;
+		//	IsGivenPosition := FALSE;
 			status := 4;
 		END_IF
+		//BREAK;
 	4://按照外部给定运动，若完成当次移动后还有给定，则继续移动
-		MC_ExtSetPointGenEnable1.Execute := TRUE;
+		MC_ExtSetPointGenEnable1.Execute := TRUE;	//TODO：感觉可移到某个CASE里
 		IF MC_ExtSetPointGenEnable1.Enabled THEN
 			ActGivenPosition := LastPosition + step;//移动坐标为上次坐标加上单次移动距离
 			LastPosition := ActGivenPosition;
 			MC_ExtSetPointGenFeed(
-				Position:= ActGivenPosition,	//给定距离
-				Velocity:= 0, 					//速度和加速度可设为0，让plc自己计算
+				Position:= ActGivenPosition,		//给定距离
+				Velocity:= 0, 						//速度和加速度可设为0，让plc自己计算
 				Acceleration:= 0, 
 				Direction:= 1, 
 				Axis:= axis1);
@@ -120,32 +93,25 @@ CASE status OF
 			//IF判定想判定等于,但是有问题,两个认为相同的浮点数之间会有一个极小的误差存在，所以不应该判断相等
 			//则判定两个的差的绝对值小于一次移动的距离的绝对值.
 			//精度直接判定
-			//a:=1E-10;
 			
-	(*		//测试用
-			IF testcount <= 9 THEN
-				IsGivenPositon := TRUE;
-				GivenPositon := MyGivenPosition[testcount];
-				testcount := testcount + 1;
-			ELSE
-				IsGivenPositon := FALSE;
-			END_IF
-			//测试用结束
-			*)
-			IF IsGivenPosition THEN	//判定还有没有给定位置，若有，则继续移动，若没有，则返回状态3等待
+			IF IsGivenPosition THEN			//判定还有没有给定位置，若有，则继续移动，若没有，则返回状态3等待
 				step := (GivenPosition - LastPosition) * PlcCycleTime / EachTime;
 				LastPosition := NextPosition;//记录上次给定位置
 				NextPosition := GivenPosition;
-				CanGivenPosition := TRUE;	//完成一次移动后，通知c++可以继续给定
-				IsGivenPosition := FALSE;
+				CanGivenPosition := TRUE;	//完成一次移动，并使用上次给定后，通知c++可以继续给定
+//				IsGivenPosition := FALSE;
+//			END_IF
+//			IF IsGivenPosition = FALSE THEN
+//			ELSIF IsGivenPosition = FALSE THEN
 			ELSE
-				status := 3;	//返回状态3，等待位置给定
+				status := 3;				//返回状态3，等待位置给定
+			END_IF
+		ELSE
+			IF IsGivenPosition THEN
+				CanGivenPosition := FALSE;		//只要c++给定，就禁止再次给定
 			END_IF
 		END_IF
 		
-(*		IF IsGivenPosition THEN
-			CanGivenPosition := FALSE;
-		END_IF*)
 		
 END_CASE
 ]]></ST>

@@ -31,6 +31,7 @@ typedef struct _GivePositionInputs
 	ULONG Status;
 	ULONG Data;
 	bool CanGivenPosition;
+	double NextPosition;
 } GivePositionInputs, *PGivePositionInputs;
 #pragma pack(pop)
 

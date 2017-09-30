@@ -82,7 +82,7 @@
           <Symbol>
             <Name>Data</Name>
             <BaseType GUID="{18071995-0000-0000-0000-000000000008}">UDINT</BaseType>
-          </Symbol><Symbol><Name>CanGivenPosition</Name><BaseType GUID="{18071995-0000-0000-0000-000000000030}">BOOL</BaseType></Symbol>
+          </Symbol><Symbol><Name>CanGivenPosition</Name><BaseType GUID="{18071995-0000-0000-0000-000000000030}">BOOL</BaseType></Symbol><Symbol><Name>NextPosition</Name><BaseType GUID="{18071995-0000-0000-0000-00000000000e}">LREAL</BaseType></Symbol>
         </DataArea>
         <DataArea>
           <AreaNo AreaType="OutputSrc">1</AreaNo>
