@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.0.38">
+  <POU Name="SerialRecieve" Id="{3f0ee299-1d34-4aa8-92f1-c8e7366e5dc9}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM SerialRecieve
+VAR
+	i:INT;
+    AA:BYTE;
+	BB:BYTE;
+	RxBufferStep:INT:=0;
+    AA_P:BYTE;
+	BB_P:BYTE;
+	JIAODU_INT:INT;
+	J1: REAL:=0;
+	J2: REAL:=0;
+	J3: REAL:=0;
+	W1:REAL:=0;
+	W2:REAL:=0;
+	t_tip:REAL:=0.01;
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[//读取编码器的数值
+	IF RxBuffer1.Count<> 0 THEN
+		FOR i:=1 TO UINT_TO_INT(RxBuffer1.Count) DO
+			IF RxBufferStep=3 THEN
+				BB:=RxBuffer1.Buffer[RxBuffer1.RdIdx];
+				AA:=AA_P;
+				RxBufferStep:=0;
+			END_IF
+			IF RxBufferStep=2 THEN
+				AA_P:=RxBuffer1.Buffer[RxBuffer1.RdIdx];
+				RxBufferStep:=3;
+			END_IF
+			IF RxBufferStep=1 THEN
+				IF RxBuffer1.Buffer[RxBuffer1.RdIdx]=90 THEN
+					RxBufferStep:=2;
+				ELSE
+					RxBufferStep:=0;
+				END_IF
+			END_IF
+			IF RxBuffer1.Buffer[RxBuffer1.RdIdx]=165 THEN
+				RxBufferStep:=1;
+			END_IF
+
+			RxBuffer1.RdIdx:=RxBuffer1.RdIdx+1;
+			IF RxBuffer1.RdIdx>300 THEN
+				RxBuffer1.RdIdx:=0;
+			END_IF
+		END_FOR
+	RxBuffer1.Count:=0;
+	END_IF
+
+	JIAODU_INT:=UINT_TO_INT(AA*256+BB);
+	JIAODU:=INT_TO_REAL(JIAODU_INT)*360.0/4096.0;
+	J3:=J2;
+	J2:=J1;
+	J1:=JIAODU;
+	JIAOSUDU:=(J1-J2)/t_tip;
+	W2:=W1;
+	W1:=JIAOSUDU;
+	JIAOJIASUDU:=(W1-W2)/t_tip;
+]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

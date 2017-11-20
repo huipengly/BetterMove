@@ -32,6 +32,8 @@ typedef struct _GivePositionInputs
 	ULONG Data;
 	bool CanGivenPosition;
 	double NextPosition;
+	float Angle;
+	float PlcTimer;
 } GivePositionInputs, *PGivePositionInputs;
 #pragma pack(pop)
 
@@ -43,6 +45,12 @@ typedef struct _GivePositionOutputs
 	ULONG Data;
 	bool IsGivenPositon;
 	double GivenPosition;
+	SHORT m1Int;
+	SHORT m2Int;
+	float rad;
+	float tarrad;
+	float m1v;
+	float m2v;
 } GivePositionOutputs, *PGivePositionOutputs;
 #pragma pack(pop)
 

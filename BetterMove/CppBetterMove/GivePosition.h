@@ -3,6 +3,8 @@
 #pragma once
 
 #include "CppBetterMoveInterfaces.h"
+#include "PID_Position.h"
+#include "Elbow.h"
 
 class CGivePosition 
 	: public ITComObject
@@ -23,6 +25,8 @@ public:
 
 	CGivePosition();
 	virtual	~CGivePosition();
+	void UpdateInputs();//将PLC变量更新到C++变量
+	void UpdateOutputs();//将C++变量更新到PLC变量
 
 	// ITcCyclic
 	virtual HRESULT TCOMAPI CycleUpdate(ITcTask* ipTask, ITcUnknown* ipCaller, ULONG_PTR context);
@@ -43,4 +47,12 @@ protected:
 
 	// TODO: Custom variable
 	UINT m_counter;
+	float timer;	//plc时间
+	const float Pi;
+	//float angle;	//编码器角度
+	//float radian;	//编码器角度转换弧度值
+	float SetRad;	//弧度给定值
+	float SetAngle;	//角度给定值
+	//PID_Position PID4Elbow;
+	Elbow elbow;
 };

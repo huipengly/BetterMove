@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.0.38">
+  <GVL Name="GVL" Id="{f9dc9ec3-d5f8-463f-b4fb-380d3b290f02}">
+    <Declaration><![CDATA[VAR_GLOBAL
+	//读取编码器角度
+	EL6_22Bin_PC1	AT %I* 	: KL6inData22b;
+	EL6_22Bout_PC1	AT %Q*	: KL6outData22b;
+	RxBuffer1: COMBuffer;
+	TxBuffer1: COMBuffer;
+	JIAODU	AT %Q* : REAL;(*单位 度*)
+	JIAOSUDU: REAL;(*单位 度*)
+	JIAOJIASUDU: REAL;(*单位 度*)
+	//往工控机存数据
+	DATA :ARRAY[1..200] OF  DATASTRUCT :=[(p1:=0,p2:=0,p2:=0,g:=FALSE,h:=FALSE)];
+	bWRITE_TO_FILE:BOOL:=TRUE;
+END_VAR]]></Declaration>
+  </GVL>
+</TcPlcObject>

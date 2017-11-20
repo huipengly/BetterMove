@@ -82,7 +82,7 @@
           <Symbol>
             <Name>Data</Name>
             <BaseType GUID="{18071995-0000-0000-0000-000000000008}">UDINT</BaseType>
-          </Symbol><Symbol><Name>CanGivenPosition</Name><BaseType GUID="{18071995-0000-0000-0000-000000000030}">BOOL</BaseType></Symbol><Symbol><Name>NextPosition</Name><BaseType GUID="{18071995-0000-0000-0000-00000000000e}">LREAL</BaseType></Symbol>
+          </Symbol><Symbol><Name>CanGivenPosition</Name><BaseType GUID="{18071995-0000-0000-0000-000000000030}">BOOL</BaseType></Symbol><Symbol><Name>NextPosition</Name><BaseType GUID="{18071995-0000-0000-0000-00000000000e}">LREAL</BaseType></Symbol><Symbol><Name>Angle</Name><BaseType GUID="{18071995-0000-0000-0000-00000000000d}">REAL</BaseType></Symbol><Symbol><Name>PlcTimer</Name><BaseType GUID="{18071995-0000-0000-0000-00000000000d}">REAL</BaseType></Symbol>
         </DataArea>
         <DataArea>
           <AreaNo AreaType="OutputSrc">1</AreaNo>
@@ -99,7 +99,7 @@
           <Symbol>
             <Name>Data</Name>
             <BaseType GUID="{18071995-0000-0000-0000-000000000008}">UDINT</BaseType>
-          </Symbol><Symbol><Name>IsGivenPositon</Name><BaseType GUID="{18071995-0000-0000-0000-000000000030}">BOOL</BaseType></Symbol><Symbol><Name>GivenPosition</Name><BaseType GUID="{18071995-0000-0000-0000-00000000000e}">LREAL</BaseType></Symbol>
+          </Symbol><Symbol><Name>IsGivenPositon</Name><BaseType GUID="{18071995-0000-0000-0000-000000000030}">BOOL</BaseType></Symbol><Symbol><Name>GivenPosition</Name><BaseType GUID="{18071995-0000-0000-0000-00000000000e}">LREAL</BaseType></Symbol><Symbol><Name>m1Int</Name><BaseType GUID="{18071995-0000-0000-0000-000000000006}">INT</BaseType></Symbol><Symbol><Name>m2Int</Name><BaseType GUID="{18071995-0000-0000-0000-000000000006}">INT</BaseType></Symbol><Symbol><Name>rad</Name><BaseType GUID="{18071995-0000-0000-0000-00000000000d}">REAL</BaseType></Symbol><Symbol><Name>tarrad</Name><BaseType GUID="{18071995-0000-0000-0000-00000000000d}">REAL</BaseType></Symbol><Symbol><Name>m1v</Name><BaseType GUID="{18071995-0000-0000-0000-00000000000d}">REAL</BaseType></Symbol><Symbol><Name>m2v</Name><BaseType GUID="{18071995-0000-0000-0000-00000000000d}">REAL</BaseType></Symbol>
         </DataArea>
       </DataAreas>
       <InterfacePointers>

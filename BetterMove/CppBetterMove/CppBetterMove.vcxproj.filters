@@ -42,6 +42,12 @@
     <ClInclude Include="GivePosition.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="PID_Position.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Elbow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TcPch.cpp">
@@ -60,6 +66,12 @@
       <Filter>TwinCAT RT Files</Filter>
     </ClCompile>
     <ClCompile Include="GivePosition.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Elbow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PID_Position.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

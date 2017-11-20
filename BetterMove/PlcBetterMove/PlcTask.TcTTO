@@ -5,7 +5,19 @@
     <CycleTime>10000</CycleTime>
     <Priority>20</Priority>
     <PouCall>
+      <Name>Fast</Name>
+    </PouCall>
+    <PouCall>
+      <Name>Elbow</Name>
+    </PouCall>
+    <PouCall>
+      <Name>WRITEFILE</Name>
+    </PouCall>
+    <PouCall>
       <Name>MAIN</Name>
+    </PouCall>
+    <PouCall>
+      <Name>SerialRecieve</Name>
     </PouCall>
     <TaskFBGuid>{7ee0ebae-4a9e-4c97-8d01-0bdd87690d54}</TaskFBGuid>
     <Fb_init>{6919c02b-899c-4c82-9a46-992151cdbb99}</Fb_init>

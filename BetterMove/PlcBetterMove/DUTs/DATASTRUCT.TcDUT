@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.0.38">
+  <DUT Name="DATASTRUCT" Id="{b6461333-2eb5-47da-b98a-85380fcf24e3}">
+    <Declaration><![CDATA[TYPE DATASTRUCT :
+STRUCT
+	p1:REAL;
+	p2:REAL;
+	p3:REAL;
+	p4:REAL;
+	p5:REAL;
+	g:BOOL;
+	h:BOOL;
+END_STRUCT
+END_TYPE]]></Declaration>
+  </DUT>
+</TcPlcObject>

@@ -36,7 +36,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Elbow.h" />
     <ClInclude Include="GivePosition.h" />
+    <ClInclude Include="PID_Position.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="TcPch.h" />
     <ClInclude Include="CppBetterMoveClassFactory.h" />
@@ -46,7 +48,13 @@
     <ClInclude Include="CppBetterMoveServices.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Elbow.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|TwinCAT RT (x86)'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="GivePosition.cpp" />
+    <ClCompile Include="PID_Position.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|TwinCAT RT (x86)'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="TcPch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|TwinCAT UM (x86)'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|TwinCAT RT (x86)'">Create</PrecompiledHeader>

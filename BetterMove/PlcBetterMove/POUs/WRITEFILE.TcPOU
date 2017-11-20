@@ -1,0 +1,97 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.0.38">
+  <POU Name="WRITEFILE" Id="{635a04bc-5215-4e49-afbc-58c81c41508f}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM WRITEFILE
+VAR
+    FILEOPEN1: FB_FileOpen;
+	bFILEOPEN1: BOOL:=FALSE;
+	hFile1		: UINT;
+	FILEWRITE1:FB_FileWrite;
+	FILECLOSE1:FB_FileClose;
+	bFILECLOSE1: BOOL:=FALSE;
+	bFILEWRITE1: BOOL := FALSE;
+	STEP:INT:=0;
+	N_SAVE:DWORD := 1;
+	N_SAVE_TOTAL: DWORD := 1;
+	str:STRING(200);
+	N:DWORD:=1;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[//将数值写入到工控机中
+IF  bWRITE_TO_FILE THEN
+	CASE STEP OF
+	0:
+		FILEOPEN1.bExecute:=FALSE;
+		STEP:=1;
+	1:
+		FILEOPEN1.bExecute:=TRUE;
+		FILECLOSE1.bExecute:=FALSE;
+		STEP:=11;
+	11:
+		IF FILEOPEN1.bBusy=FALSE AND FILEOPEN1.bError=FALSE THEN
+			hFile1:=FILEOPEN1.hFile;
+			FILEWRITE1.bExecute:=FALSE;
+			STEP:=2;
+		END_IF
+	2:
+		IF  FILEWRITE1.bBusy=FALSE AND DATA[N_SAVE].g<>DATA[N_SAVE].h THEN
+			str:=CONCAT (DWORD_TO_STRING(N_SAVE_TOTAL),' ');
+			str:=CONCAT (str,REAL_TO_STRING(DATA[N_SAVE].p1));
+			str:=CONCAT (str,' ');
+			str:=CONCAT (str,REAL_TO_STRING(DATA[N_SAVE].p2));
+			str:=CONCAT (str,' ');
+			str:=CONCAT (str,REAL_TO_STRING(DATA[N_SAVE].p3));
+			str:=CONCAT (str,'$n');
+			FILEWRITE1.pWriteBuff:=ADR(str);
+			FILEWRITE1.cbWriteLen:=LEN(str);
+			FILEWRITE1.bExecute:=TRUE;
+			DATA[N_SAVE].h:=NOT DATA[N_SAVE].h ;
+			N_SAVE:=N_SAVE+1;
+			N_SAVE_TOTAL:=N_SAVE_TOTAL+1;
+			IF N_SAVE>200 THEN
+			   N_SAVE:=1;
+			END_IF
+		END_IF;
+		IF N_SAVE_TOTAL>800000 THEN
+			STEP:=3;
+		ELSE
+			STEP:=20;
+		END_IF
+	20:
+		FILEWRITE1.bExecute:=FALSE;
+		STEP:=2;
+    3:
+		FILECLOSE1.bExecute:=TRUE;
+		STEP:=4;
+	4:
+		;
+	ELSE
+		;
+	END_CASE
+
+END_IF
+
+FILEOPEN1.ePath:=PATH_GENERIC;
+FILEOPEN1.nMode:=FOPEN_MODEWRITE  OR FOPEN_MODETEXT ;
+FILEOPEN1.sNetId:='';
+FILEOPEN1.sPathName:='C:\plcwtest.txt';
+FILEOPEN1.tTimeout:=t#2s;
+
+FILEWRITE1.hFile:=hFile1;
+FILEWRITE1.tTimeout:=t#1s;
+FILEWRITE1.sNetId:='';
+
+FILECLOSE1.hFile:=hFile1;
+FILECLOSE1.tTimeout:=t#3s;
+
+FILEOPEN1();
+FILEWRITE1();
+FILECLOSE1();
+
+N:=N+1;
+
+]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>
