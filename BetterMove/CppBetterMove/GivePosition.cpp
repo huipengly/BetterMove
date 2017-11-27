@@ -198,66 +198,66 @@ HRESULT CGivePosition::CycleUpdate(ITcTask* ipTask, ITcUnknown* ipCaller, ULONG_
 
 	// TODO: Replace the sample with your cyclic code
 
-	////测试用 添加位置坐标
-	//if (5 == PositionCount)
-	//{
-	//	time += 0.01;
-	//	if (10 <= time)
-	//	{
-	//		//11.5, 10.8, 10.7, 10.3, 11.8
-	//		MyCppPosition[PositionArraySize] = 11.5;
-	//		PositionArraySize++;
-	//		MyCppPosition[PositionArraySize] = 10.8;
-	//		PositionArraySize++;
-	//		MyCppPosition[PositionArraySize] = 10.7;
-	//		PositionArraySize++;
-	//		MyCppPosition[PositionArraySize] = 10.3;
-	//		PositionArraySize++;
-	//		MyCppPosition[PositionArraySize] = 11.8;
-	//		PositionArraySize++;
-	//	}
-	//}
-	////测试用结束
-
-	timer = m_Inputs.PlcTimer;
-	if (timer > 2)
+	//测试用 添加位置坐标
+	if (5 == PositionCount)
 	{
-		//if (0 == PositionCount)
-		//{
-		//	shoulderGive(testPosition1, 5);
-		//}
-		if (5 == PositionCount)
+		time += 0.01;
+		if (10 <= time)
 		{
-			time += 0.01;
-			if (10 <= time)
-			{
-				//11.5, 10.8, 10.7, 10.3, 11.8
-				shoulderGive(testPosition2, 5);
-			}
+			//11.5, 10.8, 10.7, 10.3, 11.8
+			MyCppPosition[PositionArraySize] = 11.5;
+			PositionArraySize++;
+			MyCppPosition[PositionArraySize] = 10.8;
+			PositionArraySize++;
+			MyCppPosition[PositionArraySize] = 10.7;
+			PositionArraySize++;
+			MyCppPosition[PositionArraySize] = 10.3;
+			PositionArraySize++;
+			MyCppPosition[PositionArraySize] = 11.8;
+			PositionArraySize++;
 		}
-		shoulder();
 	}
+	//测试用结束
 
-	//函数块，使电机按照给定值移动。
+	//timer = m_Inputs.PlcTimer;
+	//if (timer > 2)
 	//{
-	//	if (PositionCount < PositionArraySize)	//没有走完已有坐标，则继续移动
+	//	//if (0 == PositionCount)
+	//	//{
+	//	//	shoulderGive(testPosition1, 5);
+	//	//}
+	//	if (5 == PositionCount)
 	//	{
-
-	//		if (m_Inputs.CanGivenPosition)		//可以给定坐标
+	//		time += 0.01;
+	//		if (10 <= time)
 	//		{
-	//			m_Outputs.GivenPosition = MyCppPosition[PositionCount];	//将坐标传给plc
-	//			m_Outputs.IsGivenPositon = TRUE;						//c++给定了坐标
+	//			//11.5, 10.8, 10.7, 10.3, 11.8
+	//			shoulderGive(testPosition2, 5);
 	//		}
 	//	}
-
-
-	//	if ((m_Outputs.IsGivenPositon) && (MyCppPosition[PositionCount] == m_Inputs.NextPosition))
-	//		//当NextPosition已经记录了给定坐标时，认为可以继续给定，将IsGivenPositon设为假
-	//	{
-	//		m_Outputs.IsGivenPositon = FALSE;	//上一次给定坐标已被PLC记录，认为c++未给定下一个坐标，可以继续给定
-	//		++PositionCount;					//将c++坐标移动到下一个
-	//	}
+	//	shoulder();
 	//}
+
+	//函数块，使电机按照给定值移动。
+	{
+		if (PositionCount < PositionArraySize)	//没有走完已有坐标，则继续移动
+		{
+
+			if (m_Inputs.CanGivenPosition)		//可以给定坐标
+			{
+				m_Outputs.GivenPosition = MyCppPosition[PositionCount];	//将坐标传给plc
+				m_Outputs.IsGivenPositon = TRUE;						//c++给定了坐标
+			}
+		}
+
+
+		if ((m_Outputs.IsGivenPositon) && (MyCppPosition[PositionCount] == m_Inputs.NextPosition))
+			//当NextPosition已经记录了给定坐标时，认为可以继续给定，将IsGivenPositon设为假
+		{
+			m_Outputs.IsGivenPositon = FALSE;	//上一次给定坐标已被PLC记录，认为c++未给定下一个坐标，可以继续给定
+			++PositionCount;					//将c++坐标移动到下一个
+		}
+	}
 	//函数块，使电机按照给定值移动结束。
 
 	//肘关节

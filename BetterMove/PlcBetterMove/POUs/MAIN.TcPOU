@@ -8,7 +8,10 @@ VAR
 	MC_ExtSetPointGenDisable1: MC_ExtSetPointGenDisable;
 	MC_ExtSetPointGenEnable1: MC_ExtSetPointGenEnable;
 	MC_Reset1: MC_Reset;
+	MC_Power2: MC_Power;
+	MC_MoveAbsolute2: MC_MoveAbsolute;
 	axis1: AXIS_REF;				//NC轴变量
+	axis2: AXIS_REF;				//NC轴变量
 	status: INT;					//状态变量
 //	MoveTime: LREAL := 0;			//两点间移动时间
 	PlcCycleTime: LREAL := 0.01;	//PLC循环时间
@@ -42,6 +45,14 @@ MC_ExtSetPointGenDisable1(
 	
 MC_ExtSetPointGenEnable1(
 	Axis:= axis1, );
+	
+MC_Power2(
+	Axis:= axis2,
+	Enable_Positive:= TRUE,
+	Enable_Negative:= TRUE, );
+	
+MC_MoveAbsolute2(  //初始化位置
+	Axis:= axis2, );
 
 CASE status OF
 	0://init 初始化
@@ -49,18 +60,26 @@ CASE status OF
 		MC_ExtSetPointGenEnable1.Execute := FALSE;
 		MC_ExtSetPointGenDisable1.Execute := FALSE;
 		MC_MoveAbsolute1.Execute := FALSE;
+		
+		MC_Power2.Enable := FALSE;
+		MC_MoveAbsolute2.Execute := FALSE;
 		status := 1;
 	1://power 使能
 		MC_Power1.Enable := TRUE;
-		IF MC_Power1.Status THEN
+		MC_Power2.Enable := TRUE;
+		IF MC_Power1.Status AND MC_Power2.Status THEN
 			status := 2;
 		END_IF
 	2://move 移动到初始位置
 		MC_MoveAbsolute1.Position := InitPosition;
 		MC_MoveAbsolute1.Velocity := 2;
 		MC_MoveAbsolute1.Execute := TRUE;
-		IF MC_MoveAbsolute1.Done THEN
+		MC_MoveAbsolute2.Position := 0;
+		MC_MoveAbsolute2.Velocity := 1;
+		MC_MoveAbsolute2.Execute := TRUE;
+		IF MC_MoveAbsolute1.Done AND MC_MoveAbsolute2.Done THEN
 			MC_MoveAbsolute1.Execute := FALSE;
+			MC_MoveAbsolute2.Execute := FALSE;
 			CanGivenPosition := TRUE;			//进入判断前一个时间,才将允许给定标志量变为真
 			status := 3;
 		END_IF
