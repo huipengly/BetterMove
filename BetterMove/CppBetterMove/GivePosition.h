@@ -27,6 +27,8 @@ public:
 	virtual	~CGivePosition();
 	void UpdateInputs();//将PLC变量更新到C++变量
 	void UpdateOutputs();//将C++变量更新到PLC变量
+	void shoulder();
+	void shoulderGive(float tar[], int num);
 
 	// ITcCyclic
 	virtual HRESULT TCOMAPI CycleUpdate(ITcTask* ipTask, ITcUnknown* ipCaller, ULONG_PTR context);
@@ -55,4 +57,11 @@ protected:
 	float SetAngle;	//角度给定值
 	//PID_Position PID4Elbow;
 	Elbow elbow;
+
+	float MyCppPosition[100];
+	float testPosition1[5];
+	float testPosition2[5];
+	int PositionCount;			//位置数组数据移动到第几个坐标
+	int PositionArraySize;		//位置数组有多少个坐标
+	double time;
 };

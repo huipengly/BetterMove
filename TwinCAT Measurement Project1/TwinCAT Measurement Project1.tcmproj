@@ -5,9 +5,4 @@
     <Name>TwinCAT Measurement Project1</Name>
     <RootNamespace>TwinCAT Measurement Project1</RootNamespace>
   </PropertyGroup>
-  <ItemGroup>
-    <Content Include="Scope YT Project.tcscope">
-      <SubType>Content</SubType>
-    </Content>
-  </ItemGroup>
 </Project>
