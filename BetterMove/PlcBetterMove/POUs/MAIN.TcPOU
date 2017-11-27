@@ -23,7 +23,7 @@ VAR
 	GivenPosition AT%I* : LREAL;	//给定位置,C++输入给定位置
 	CanGivenPosition AT%Q* : BOOL := FALSE;	//是否可以给定位置,输出给C++，还未做
 	IsGivenPosition AT%I* : BOOL := FALSE;	//是否有给定位置,C++输入判定
-	InitPosition: LREAL := 10;		//机械臂初始化位置
+	InitPosition: LREAL := 0;		//机械臂初始化位置
 	
 	//测试用变量
 	testcount: INT;					//数组计数

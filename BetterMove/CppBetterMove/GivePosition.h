@@ -27,7 +27,7 @@ public:
 	virtual	~CGivePosition();
 	void UpdateInputs();//将PLC变量更新到C++变量
 	void UpdateOutputs();//将C++变量更新到PLC变量
-	void shoulder();
+	void shoulderRun();
 	void shoulderGive(float tar[], int num);
 
 	// ITcCyclic
@@ -63,5 +63,5 @@ protected:
 	float testPosition2[5];
 	int PositionCount;			//位置数组数据移动到第几个坐标
 	int PositionArraySize;		//位置数组有多少个坐标
-	double time;
+	int counter;
 };
