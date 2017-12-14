@@ -69,7 +69,7 @@ double kinematics_forward(double* pos, double* R, double* r)
 ***************************************************************/
 
 
-double* kinematics_inverse(double x, double y, double phi, double* Ajoint)    //求逆解角度
+void kinematics_inverse(double x, double y, double phi, double* Ajoint)    //求逆解角度
 {
 
 	phi = phi/180.0*PI;
@@ -145,7 +145,7 @@ double* kinematics_inverse(double x, double y, double phi, double* Ajoint)    //
 		{
 			Ajoint[i] = joint[i];
 		}
-		return joint;
+		//return joint;
 
 	}
 	else
@@ -154,7 +154,7 @@ double* kinematics_inverse(double x, double y, double phi, double* Ajoint)    //
 		{
 			Ajoint[i] = joint[i];
 		}
-		return joint + 3;
+		//return joint + 3;
 	}
 
 }

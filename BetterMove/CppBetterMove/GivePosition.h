@@ -26,8 +26,10 @@ public:
 
 	CGivePosition();
 	virtual	~CGivePosition();
-	void UpdateInputs();//将PLC变量更新到C++变量
-	void UpdateOutputs();//将C++变量更新到PLC变量
+	void UpdateInputs();		//更新c++输入
+	void ElbowUpdateInputs();	//更新肘关节c++输入
+	void UpdateOutputs();		//更新c++输出
+	void ElbowUpdateOutputs();	//更新肘关节c++输出
 	void shoulderRun();
 	void shoulderSetAngle(double tarAngle[], int num);
 	void shoulderSetPosition(double tarPosition[], int num);
@@ -50,15 +52,15 @@ protected:
 	ITcCyclicCallerInfoPtr m_spCyclicCaller;
 
 	// TODO: Custom variable
-	UINT m_counter;
-	float timer;	//plc时间
-	const float Pi;
+	//UINT m_counter;
+	double timer;	//plc时间
+	const double pi;
 
 	/* elbow variables */
 	//float angle;	//编码器角度
 	//float radian;	//编码器角度转换弧度值
-	float SetRad;	//弧度给定值
-	float SetAngle;	//角度给定值
+	double SetRad;	//弧度给定值
+	double SetAngle;	//角度给定值
 	//PID_Position PID4Elbow;
 	Elbow elbow;
 

@@ -27,7 +27,7 @@
 
 
 double kinematics_forward(double* pos, double* R, double* r);
-double* kinematics_inverse(double x, double y, double phi, double* Ajoint);
+void kinematics_inverse(double x, double y, double phi, double* Ajoint);
 
 
 

@@ -21,7 +21,7 @@ public:
 	double ShowM2();
 
 protected:
-	const double pi;		//数学常量PI
+	const double pi;	//数学常量PI
 	double angle;		//肘关节角度
 	double rad;			//肘关节弧度制角度
 	double m1, m2;		//气动肌肉比例阀电压值，m1代表单个肌肉一边，m2代表2根肌肉一边
