@@ -13,7 +13,7 @@ PID_Position::PID_Position()
 	err_pre = err;
 }
 
-PID_Position::PID_Position(float p, float i, float d, float t)
+PID_Position::PID_Position(double p, double i, double d, double t)
 {
 	kp = p;
 	ki = i;
@@ -31,7 +31,7 @@ PID_Position::~PID_Position()
 	
 }
 
-void PID_Position::set(float p, float i, float d, float t)
+void PID_Position::set(double p, double i, double d, double t)
 {
 	kp = p;
 	ki = i;
@@ -39,9 +39,9 @@ void PID_Position::set(float p, float i, float d, float t)
 	T = t;
 }
 
-float PID_Position::pid_control(float tar, float act)
+double PID_Position::pid_control(double tar, double act)
 {
-	float u = 0;
+	double u = 0;
 	target = tar;
 	actual = act;
 	err = target - actual;
@@ -54,7 +54,22 @@ float PID_Position::pid_control(float tar, float act)
 	return u;
 }
 
-float PID_Position::ShowKp()
+double PID_Position::ShowKp()
 {
 	return kp;
+}
+
+double PID_Position::ShowKi()
+{
+	return ki;
+}
+
+double PID_Position::ShowKd()
+{
+	return kd;
+}
+
+double PID_Position::ShowT()
+{
+	return T;
 }
