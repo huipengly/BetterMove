@@ -38,6 +38,7 @@
   <ItemGroup>
     <ClInclude Include="Elbow.h" />
     <ClInclude Include="GivePosition.h" />
+    <ClInclude Include="kinematics.h" />
     <ClInclude Include="PID_Position.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="TcPch.h" />
@@ -52,6 +53,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|TwinCAT RT (x86)'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="GivePosition.cpp" />
+    <ClCompile Include="kinematics.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|TwinCAT RT (x86)'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="PID_Position.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|TwinCAT RT (x86)'">NotUsing</PrecompiledHeader>
     </ClCompile>
