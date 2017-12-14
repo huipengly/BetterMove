@@ -5,6 +5,7 @@
 #include "CppBetterMoveInterfaces.h"
 #include "PID_Position.h"
 #include "Elbow.h"
+#include "kinematics.h"
 
 class CGivePosition 
 	: public ITComObject
@@ -52,6 +53,8 @@ protected:
 	UINT m_counter;
 	float timer;	//plc时间
 	const float Pi;
+
+	/* elbow variables */
 	//float angle;	//编码器角度
 	//float radian;	//编码器角度转换弧度值
 	float SetRad;	//弧度给定值
@@ -59,13 +62,21 @@ protected:
 	//PID_Position PID4Elbow;
 	Elbow elbow;
 
+	/* shoulder variables */
 	double MyCppPosition[100];
+	int PositionCount;			//位置数组数据移动到第几个坐标
+	int PositionArraySize;		//位置数组有多少个坐标
+	double shoulderMaxPos;
+	/* shoulder test use */
+	int counter;
 	double testPosition1[5];
 	double testPosition2[5];
 	double testAngle1[5];
 	double testAngle2[5];
-	int PositionCount;			//位置数组数据移动到第几个坐标
-	int PositionArraySize;		//位置数组有多少个坐标
-	double shoulderMaxPos;
-	int counter;
+
+	/* kinematics variables */
+	double Ax;
+	double Ay;
+	double Aphi;
+	double  Ajoint[6];
 };
