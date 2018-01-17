@@ -80,5 +80,6 @@ protected:
 	double Ax;
 	double Ay;
 	double Aphi;
-	double  Ajoint[6];
+	double Ajoint[6];
+	bool SetFlag;
 };

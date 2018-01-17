@@ -105,6 +105,7 @@ CGivePosition::CGivePosition()
 	PositionArraySize = 0;		//位置数组有多少个坐标
 	shoulderMaxPos = 10;		//肘关节最多移动位置
 	//counter = 0;
+	SetFlag = false;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -203,22 +204,71 @@ HRESULT CGivePosition::CycleUpdate(ITcTask* ipTask, ITcUnknown* ipCaller, ULONG_
 	UpdateInputs();
 	if (timer > 2)
 	{
-		Ax = -26.5;
-		Ay = 589.763;
-		Aphi = 180;
-		Ajoint[6] = { 0 };
+		if ((timer > 2) && (timer < 5) && (SetFlag == false))
+		{
+			Ax = 681;
+			Ay = 0;
+			Aphi = 0;
+			Ajoint[6] = { 0 };
 
-		kinematics_inverse(Ax, Ay, Aphi, Ajoint);
+			kinematics_inverse(Ax, Ay, Aphi, Ajoint);
 
-		double SetShoulderAngle = Ajoint[0];
-		//double SetShoulderAngle = 0;
-		shoulderSetAngle(&SetShoulderAngle, 1);
+			//double SetShoulderAngle = Ajoint[0];
+			double SetShoulderAngle = 0;
+			shoulderSetAngle(&SetShoulderAngle, 1);
 
-		double SetElbowAngle = Ajoint[1];
-		//double SetElbowAngle = 0;
-		//SetRad = SetElbowAngle / 180.0 * pi;
+			//double SetElbowAngle = Ajoint[1];
+			double SetElbowAngle = 0;
+			elbow.SetTargetAngle(SetElbowAngle);
 
-		elbow.SetTargetAngle(SetElbowAngle);
+			SetFlag = true;
+		}
+		else if ((timer > 5) && (timer < 6))
+		{
+			SetFlag = false;
+		}
+		else if ((timer > 6) && (timer < 16) && (SetFlag == false))
+		{
+			Ax = 455.4320;
+			Ay = 474.8313;
+			Aphi = 90;
+			Ajoint[6] = { 0 };
+
+			kinematics_inverse(Ax, Ay, Aphi, Ajoint);
+
+			//double SetShoulderAngle = Ajoint[0];
+			double SetShoulderAngle = 30;
+			shoulderSetAngle(&SetShoulderAngle, 1);
+
+			//double SetElbowAngle = Ajoint[1];
+			double SetElbowAngle = 30;
+			elbow.SetTargetAngle(SetElbowAngle);
+
+			SetFlag = true;
+		}
+		else if ((timer > 16) && (timer < 17))
+		{
+			SetFlag = false;
+		}
+		else if ((timer > 17) && (timer < 20) && (SetFlag == false))
+		{
+			Ax = 681;
+			Ay = 0;
+			Aphi = 0;
+			Ajoint[6] = { 0 };
+
+			kinematics_inverse(Ax, Ay, Aphi, Ajoint);
+
+			//double SetShoulderAngle = Ajoint[0];
+			double SetShoulderAngle = 0;
+			shoulderSetAngle(&SetShoulderAngle, 1);
+
+			//double SetElbowAngle = Ajoint[1];
+			double SetElbowAngle = 0;
+			elbow.SetTargetAngle(SetElbowAngle);
+
+			SetFlag = true;
+		}
 
 		shoulderRun();
 		elbow.run();
@@ -244,9 +294,9 @@ void CGivePosition::UpdateOutputs()
 
 void CGivePosition::ElbowUpdateInputs()
 {
-	//elbow.GetAngle(m_Inputs.Angle - 270);//不受力状态时，角度为270，减去，角度会增大//旧的肘
+	elbow.GetActualAngle(m_Inputs.Angle - 261);//不受力状态时，角度为270，减去，角度会增大//旧的肘
 
-	elbow.GetActualAngle(350 - m_Inputs.Angle);//不受力状态时，角度为350，减去，角度会减少//新的肘
+	//elbow.GetActualAngle(350 - m_Inputs.Angle);//不受力状态时，角度为350，减去，角度会减少//新的肘
 
 }
 
@@ -336,7 +386,8 @@ void CGivePosition::shoulderSetAngle(double tarAngle[], int num)
 		}
 		else
 		{
-			if (tmpTarPos - MyCppPosition[PositionArraySize - 1] < 1e-5)//如果下一个目标点和前一个目标点一样，就不添加。
+			//FIXME:前后差值为负值的情况没考虑
+			if (abs(tmpTarPos - MyCppPosition[PositionArraySize - 1]) < 1e-5)//如果下一个目标点和前一个目标点一样，就不添加。
 			{
 				continue;
 			}

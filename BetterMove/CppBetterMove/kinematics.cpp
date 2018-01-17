@@ -113,6 +113,7 @@ void kinematics_inverse(double x, double y, double phi, double* Ajoint)    //ÇóÄ
 	s2 = -s2;
 	r2 = atan2_(s2, c2);
 
+
 	k1 = L1 + L2 * c2;
 	k2 = L2*s2;
 
@@ -150,9 +151,9 @@ void kinematics_inverse(double x, double y, double phi, double* Ajoint)    //ÇóÄ
 	}
 	else
 	{
-		for (int i = 0; i < 6; i++)
+		for (int i = 0; i < 3; i++)
 		{
-			Ajoint[i] = joint[i];
+			Ajoint[i] = joint[i + 3];
 		}
 		//return joint + 3;
 	}
