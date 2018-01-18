@@ -65,7 +65,7 @@ protected:
 	Elbow elbow;
 
 	/* shoulder variables */
-	double MyCppPosition[100];
+	double MyCppPosition[2000];
 	int PositionCount;			//位置数组数据移动到第几个坐标
 	int PositionArraySize;		//位置数组有多少个坐标
 	double shoulderMaxPos;

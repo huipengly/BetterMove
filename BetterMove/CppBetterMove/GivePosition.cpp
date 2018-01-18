@@ -204,71 +204,92 @@ HRESULT CGivePosition::CycleUpdate(ITcTask* ipTask, ITcUnknown* ipCaller, ULONG_
 	UpdateInputs();
 	if (timer > 2)
 	{
-		if ((timer > 2) && (timer < 5) && (SetFlag == false))
+		if ((timer > 2) && (timer < 6))
 		{
-			Ax = 681;
-			Ay = 0;
-			Aphi = 0;
-			Ajoint[6] = { 0 };
-
-			kinematics_inverse(Ax, Ay, Aphi, Ajoint);
-
 			//double SetShoulderAngle = Ajoint[0];
-			double SetShoulderAngle = 0;
+			double SetShoulderAngle = 0.2 * timer;
 			shoulderSetAngle(&SetShoulderAngle, 1);
 
 			//double SetElbowAngle = Ajoint[1];
-			double SetElbowAngle = 0;
+			double SetElbowAngle = 0.2 * timer;
 			elbow.SetTargetAngle(SetElbowAngle);
-
-			SetFlag = true;
 		}
-		else if ((timer > 5) && (timer < 6))
+		if ((timer > 6) && (timer < 10))
 		{
-			SetFlag = false;
-		}
-		else if ((timer > 6) && (timer < 16) && (SetFlag == false))
-		{
-			Ax = 455.4320;
-			Ay = 474.8313;
-			Aphi = 90;
-			Ajoint[6] = { 0 };
-
-			kinematics_inverse(Ax, Ay, Aphi, Ajoint);
-
 			//double SetShoulderAngle = Ajoint[0];
-			double SetShoulderAngle = 30;
+			double SetShoulderAngle = 0.2 * (10 - timer);
 			shoulderSetAngle(&SetShoulderAngle, 1);
 
 			//double SetElbowAngle = Ajoint[1];
-			double SetElbowAngle = 30;
+			double SetElbowAngle = 0.2 * (10 - timer);
 			elbow.SetTargetAngle(SetElbowAngle);
-
-			SetFlag = true;
 		}
-		else if ((timer > 16) && (timer < 17))
-		{
-			SetFlag = false;
-		}
-		else if ((timer > 17) && (timer < 20) && (SetFlag == false))
-		{
-			Ax = 681;
-			Ay = 0;
-			Aphi = 0;
-			Ajoint[6] = { 0 };
 
-			kinematics_inverse(Ax, Ay, Aphi, Ajoint);
+		//if ((timer > 2) && (timer < 5) && (SetFlag == false))
+		//{
+		//	Ax = 681;
+		//	Ay = 0;
+		//	Aphi = 0;
+		//	Ajoint[6] = { 0 };
 
-			//double SetShoulderAngle = Ajoint[0];
-			double SetShoulderAngle = 0;
-			shoulderSetAngle(&SetShoulderAngle, 1);
+		//	kinematics_inverse(Ax, Ay, Aphi, Ajoint);
 
-			//double SetElbowAngle = Ajoint[1];
-			double SetElbowAngle = 0;
-			elbow.SetTargetAngle(SetElbowAngle);
+		//	//double SetShoulderAngle = Ajoint[0];
+		//	double SetShoulderAngle = 0;
+		//	shoulderSetAngle(&SetShoulderAngle, 1);
 
-			SetFlag = true;
-		}
+		//	//double SetElbowAngle = Ajoint[1];
+		//	double SetElbowAngle = 0;
+		//	elbow.SetTargetAngle(SetElbowAngle);
+
+		//	SetFlag = true;
+		//}
+		//else if ((timer > 5) && (timer < 6))
+		//{
+		//	SetFlag = false;
+		//}
+		//else if ((timer > 6) && (timer < 16) && (SetFlag == false))
+		//{
+		//	Ax = 455.4320;
+		//	Ay = 474.8313;
+		//	Aphi = 90;
+		//	Ajoint[6] = { 0 };
+
+		//	kinematics_inverse(Ax, Ay, Aphi, Ajoint);
+
+		//	//double SetShoulderAngle = Ajoint[0];
+		//	double SetShoulderAngle = 30;
+		//	shoulderSetAngle(&SetShoulderAngle, 1);
+
+		//	//double SetElbowAngle = Ajoint[1];
+		//	double SetElbowAngle = 30;
+		//	elbow.SetTargetAngle(SetElbowAngle);
+
+		//	SetFlag = true;
+		//}
+		//else if ((timer > 16) && (timer < 17))
+		//{
+		//	SetFlag = false;
+		//}
+		//else if ((timer > 17) && (timer < 20) && (SetFlag == false))
+		//{
+		//	Ax = 681;
+		//	Ay = 0;
+		//	Aphi = 0;
+		//	Ajoint[6] = { 0 };
+
+		//	kinematics_inverse(Ax, Ay, Aphi, Ajoint);
+
+		//	//double SetShoulderAngle = Ajoint[0];
+		//	double SetShoulderAngle = 0;
+		//	shoulderSetAngle(&SetShoulderAngle, 1);
+
+		//	//double SetElbowAngle = Ajoint[1];
+		//	double SetElbowAngle = 0;
+		//	elbow.SetTargetAngle(SetElbowAngle);
+
+		//	SetFlag = true;
+		//}
 
 		shoulderRun();
 		elbow.run();
@@ -369,7 +390,7 @@ void CGivePosition::shoulderSetAngle(double tarAngle[], int num)
 					{
 						MyCppPosition[PositionArraySize] = MyCppPosition[PositionArraySize - 1] + tmpTarPos / pieces;
 					}
-					if (PositionArraySize < 99)
+					if (PositionArraySize < 1000)
 					{
 						PositionArraySize++;
 					}
@@ -378,7 +399,7 @@ void CGivePosition::shoulderSetAngle(double tarAngle[], int num)
 			else
 			{
 				MyCppPosition[PositionArraySize] = tmpTarPos;
-				if (PositionArraySize < 99)
+				if (PositionArraySize < 1000)
 				{
 					PositionArraySize++;
 				}
@@ -397,7 +418,7 @@ void CGivePosition::shoulderSetAngle(double tarAngle[], int num)
 				for (int j = 0; j < pieces; j++)
 				{
 					MyCppPosition[PositionArraySize] = MyCppPosition[PositionArraySize - 1] + tmpTarPos * 1 / pieces;
-					if (PositionArraySize < 99)
+					if (PositionArraySize < 1000)
 					{
 						PositionArraySize++;
 					}
@@ -406,7 +427,7 @@ void CGivePosition::shoulderSetAngle(double tarAngle[], int num)
 			else
 			{
 				MyCppPosition[PositionArraySize] = tmpTarPos;
-				if (PositionArraySize < 99)
+				if (PositionArraySize < 1000)
 				{
 					PositionArraySize++;
 				}
